@@ -55,7 +55,7 @@
       const lines = marc.split('\n');
 
       let cdNum = "RCD ####";
-      let title = "";
+      let performer = "";
       let date = "";
       let programLines = [];
       let capturing505 = false;
@@ -65,7 +65,7 @@
 
         if (line.startsWith("245")) {
           const match = line.match(/\$a([^$/]+)/);
-          if (match) title = match[1].trim().replace(/\.$/, '');
+          if (match) performer = match[1].trim().replace(/\.$/, '');
         }
 
         if (line.startsWith("500") && line.toLowerCase().includes("recorded on")) {
@@ -103,25 +103,32 @@
         return;
       }
 
-      // Smart fix: look for " I. " and insert a break there if needed
-      const program = programRaw.replace(/([^.])\s+(I\.\s)/g, "$1\n$2");
-
-      const works = program.split(/\s*--\s*/).map(work => {
-        const parts = work.split(/\s*\/\s*/);
-        const rawMovements = parts[0].split(/\s*;\s*/);
-        const movements = rawMovements.map(m => `   ${m.trim()}`).join('\n');
-        const composer = parts[1] ? parts[1].trim() : "";
-        return { movements, composer };
+      // Final fix: split title from movements using " I." marker
+      const works = programRaw.split(/\s*--\s*/).map(work => {
+        const parts = work.split(/\s+(?=I\.\s)/); // splits at "I." and keeps it
+        const titleLine = parts[0].trim();
+        const movementBlock = parts[1] ? parts[1].trim() : "";
+        const movementAndComposer = movementBlock.split(/\s*\/\s*/);
+        const movements = movementAndComposer[0]
+          .split(/\s*;\s*/)
+          .map(m => `   ${m.trim()}`)
+          .join('\n');
+        const composer = movementAndComposer[1] ? movementAndComposer[1].trim() : "";
+        return {
+          movements: movements,
+          composer: composer,
+          title: titleLine
+        };
       });
 
-      let output = `<strong>${cdNum}</strong><br>${title}<br>${date}<br><br>`;
+      let output = `<strong>${cdNum}</strong><br>${performer}<br>${date}<br><br>`;
       works.forEach(work => {
         const lines = work.movements.split('\n');
         output += `
           <div style="display: flex; justify-content: space-between;">
             <div>
-              <strong>${lines[0]}</strong><br>
-              ${lines.slice(1).map(m => `${m}`).join('<br>')}
+              <strong>${work.title}</strong><br>
+              ${lines.map(m => m).join('<br>')}
             </div>
             <div style="text-align:right; white-space:nowrap; font-weight:bold;">
               ${work.composer}
