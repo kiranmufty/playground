@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CD Case Layout Generator</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+      background: #fdfdfd;
+      color: #111;
+    }
+
+    textarea {
+      width: 100%;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+      background: #3b245e;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #563d7c;
+    }
+
+    #recitalOutput {
+      margin-top: 30px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>Paste MARC Record</h2>
+  <textarea id="marcInput" rows="20" placeholder="Paste your MARC record with 505 here..."></textarea><br>
+  <button onclick="formatRecital()">Generate CD Case Layout</button>
+
+  <div id="recitalOutput"></div>
+
+  <script>
+    function formatRecital() {
+      const marc = document.getElementById("marcInput").value;
+      const lines = marc.split('\n');
+
+      let cdNum = "RCD ####";
+      let title = "";
+      let date = "";
+      let programLines = [];
+      let capturing505 = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        if (line.startsWith("245")) {
+          const match = line.match(/\$a([^$/]+)/);
+          if (match) title = match[1].trim().replace(/\.$/, '');
+        }
+
+        if (line.startsWith("500") && line.toLowerCase().includes("recorded on")) {
+          const dateMatch = line.match(/on ([A-Za-z]+ \d{1,2}, \d{4})/);
+          if (dateMatch) {
+            const raw = new Date(dateMatch[1]);
+            const month = raw.getMonth() + 1;
+            const day = raw.getDate();
+            const shortYear = raw.getFullYear().toString().slice(-2);
+            date = `${month}/${day}/${shortYear}`;
+          }
+        }
+
+        if (line.startsWith("505")) {
+          const match = line.match(/\$a(.+)/);
+          if (match) {
+            programLines.push(match[1].trim());
+            capturing505 = true;
+          }
+          continue;
+        }
+
+        if (capturing505) {
+          if (/^\d{3}/.test(line)) {
+            capturing505 = false;
+          } else {
+            programLines.push(line.trim());
+          }
+        }
+      }
+
+      const program = programLines.join(" ");
+      if (!program) {
+        document.getElementById("recitalOutput").innerHTML = "No 505 program data found.";
+        return;
+      }
+
+      const works = program.split(/\s*--\s*/).map(work => {
+        const parts = work.split(/\s*\/\s*/);
+        const rawMovements = parts[0].split(/\s*;\s*/);
+        const movements = rawMovements.map(m => `${m.trim()}`).join('\n');
+        const composer = parts[1] ? parts[1].trim() : "";
+        return { movements, composer };
+      });
+
+      let output = `<strong>${cdNum}</strong><br>${title}<br>${date}<br><br>`;
+      works.forEach(work => {
+        const [mainTitle, ...subMovements] = work.movements.split('\n');
+        output += `
+          <div style="display: flex; justify-content: space-between;">
+            <div>
+              <strong>${mainTitle}</strong><br>
+              ${subMovements.map(m => `${m}`).join('<br>')}
+            </div>
+            <div style="text-align:right; white-space:nowrap; font-weight:bold;">
+              ${work.composer}
+            </div>
+          </div><br>`;
+      });
+
+      document.getElementById("recitalOutput").innerHTML = output;
+    }
+  </script>
+</body>
+</html>
