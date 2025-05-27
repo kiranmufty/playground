@@ -106,19 +106,19 @@
       const works = program.split(/\s*--\s*/).map(work => {
         const parts = work.split(/\s*\/\s*/);
         const rawMovements = parts[0].split(/\s*;\s*/);
-        const movements = rawMovements.map(m => `${m.trim()}`).join('\n');
+        const movements = rawMovements.map(m => `   ${m.trim()}`).join('\n');  // all movements get equal formatting
         const composer = parts[1] ? parts[1].trim() : "";
         return { movements, composer };
       });
 
       let output = `<strong>${cdNum}</strong><br>${title}<br>${date}<br><br>`;
       works.forEach(work => {
-        const [mainTitle, ...subMovements] = work.movements.split('\n');
+        const lines = work.movements.split('\n');
         output += `
           <div style="display: flex; justify-content: space-between;">
             <div>
-              <strong>${mainTitle}</strong><br>
-              ${subMovements.map(m => `${m}`).join('<br>')}
+              <strong>${lines[0]}</strong><br>
+              ${lines.slice(1).map(m => `${m}`).join('<br>')}
             </div>
             <div style="text-align:right; white-space:nowrap; font-weight:bold;">
               ${work.composer}
