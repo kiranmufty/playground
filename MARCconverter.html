@@ -41,12 +41,26 @@
       white-space: pre-wrap;
     }
 
-    .title-composer {
+    .work-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       margin-bottom: 4px;
     }
 
-    .title-composer .composer {
+    .work-left {
       font-weight: bold;
+    }
+
+    .work-right {
+      font-weight: bold;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .movements {
+      margin-left: 1.5em;
+      margin-bottom: 1em;
     }
   </style>
 </head>
@@ -114,7 +128,7 @@
       }
 
       const works = programRaw.split(/\s*--\s*/).map(work => {
-        const parts = work.split(/\s+(?=I\.\s)/); // split before first "I. "
+        const parts = work.split(/\s+(?=I\.\s)/);
         const titleLine = (parts[0] || "").trim();
 
         const movementBlock = parts[1] ? parts[1].trim() : "";
@@ -140,14 +154,14 @@
         .replace(/>/g, "&gt;");
 
       works.forEach(work => {
-        const movementLines = work.movements ? work.movements.split('\n') : [];
         output += `
-          <div>
-            <div class="title-composer">
-              <strong>${esc(work.title)}</strong>${work.composer ? ` — <span class="composer">${esc(work.composer)}</span>` : ""}
-            </div>
-            ${movementLines.map(m => esc(m)).join('<br>')}
-          </div><br>`;
+          <div class="work-row">
+            <div class="work-left">${esc(work.title)}</div>
+            <div class="work-right">${esc(work.composer)}</div>
+          </div>`;
+        if (work.movements) {
+          output += `<div class="movements">${esc(work.movements).replace(/\n/g,'<br>')}</div>`;
+        }
       });
 
       document.getElementById("recitalOutput").innerHTML = output;
