@@ -40,6 +40,14 @@
       margin-top: 30px;
       white-space: pre-wrap;
     }
+
+    .title-composer {
+      margin-bottom: 4px;
+    }
+
+    .title-composer .composer {
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -61,7 +69,7 @@
       let capturing505 = false;
 
       for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+        const line = (lines[i] || "");
 
         if (line.startsWith("245")) {
           const match = line.match(/\$a([^$/]+)/);
@@ -72,10 +80,12 @@
           const dateMatch = line.match(/on ([A-Za-z]+ \d{1,2}, \d{4})/);
           if (dateMatch) {
             const raw = new Date(dateMatch[1]);
-            const month = raw.getMonth() + 1;
-            const day = raw.getDate();
-            const shortYear = raw.getFullYear().toString().slice(-2);
-            date = `${month}/${day}/${shortYear}`;
+            if (!isNaN(raw)) {
+              const month = raw.getMonth() + 1;
+              const day = raw.getDate();
+              const shortYear = raw.getFullYear().toString().slice(-2);
+              date = `${month}/${day}/${shortYear}`;
+            }
           }
         }
 
@@ -91,48 +101,52 @@
         if (capturing505) {
           if (/^\d{3}/.test(line)) {
             capturing505 = false;
-          } else {
+          } else if (line.trim()) {
             programLines.push(line.trim());
           }
         }
       }
 
-      const programRaw = programLines.join(" ");
+      const programRaw = programLines.join(" ").replace(/\s+/g, " ").trim();
       if (!programRaw) {
         document.getElementById("recitalOutput").innerHTML = "No 505 program data found.";
         return;
       }
 
-      // Final fix: split title from movements using " I." marker
       const works = programRaw.split(/\s*--\s*/).map(work => {
-        const parts = work.split(/\s+(?=I\.\s)/); // splits at "I." and keeps it
-        const titleLine = parts[0].trim();
+        const parts = work.split(/\s+(?=I\.\s)/); // split before first "I. "
+        const titleLine = (parts[0] || "").trim();
+
         const movementBlock = parts[1] ? parts[1].trim() : "";
         const movementAndComposer = movementBlock.split(/\s*\/\s*/);
         const movements = movementAndComposer[0]
-          .split(/\s*;\s*/)
-          .map(m => `   ${m.trim()}`)
-          .join('\n');
-        const composer = movementAndComposer[1] ? movementAndComposer[1].trim() : "";
-        return {
-          movements: movements,
-          composer: composer,
-          title: titleLine
-        };
+          ? movementAndComposer[0].split(/\s*;\s*/).map(m => `   ${m.trim()}`).join('\n')
+          : "";
+
+        const composer = movementAndComposer[1]
+          ? movementAndComposer[1].trim()
+          : (titleLine.includes('/') ? titleLine.split('/').slice(1).join('/').trim() : "");
+
+        const cleanTitle = titleLine.includes('/') ? titleLine.split('/')[0].trim() : titleLine;
+
+        return { title: cleanTitle, composer, movements };
       });
 
-      let output = `<strong>${cdNum}</strong><br>${performer}<br>${date}<br><br>`;
+      let output = `<strong>${cdNum}</strong><br>${performer}<br>${(date || "")}<br><br>`;
+
+      const esc = s => String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
       works.forEach(work => {
-        const lines = work.movements.split('\n');
+        const movementLines = work.movements ? work.movements.split('\n') : [];
         output += `
-          <div style="display: flex; justify-content: space-between;">
-            <div>
-              <strong>${work.title}</strong><br>
-              ${lines.map(m => m).join('<br>')}
+          <div>
+            <div class="title-composer">
+              <strong>${esc(work.title)}</strong>${work.composer ? ` — <span class="composer">${esc(work.composer)}</span>` : ""}
             </div>
-            <div style="text-align:right; white-space:nowrap; font-weight:bold;">
-              ${work.composer}
-            </div>
+            ${movementLines.map(m => esc(m)).join('<br>')}
           </div><br>`;
       });
 
@@ -141,4 +155,3 @@
   </script>
 </body>
 </html>
-
