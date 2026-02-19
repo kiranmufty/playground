@@ -1,0 +1,518 @@
+ <style>
+/* === Load Google Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0..1,200..900&display=swap');
+/* === Global Typography Reset === */
+body, 
+.s-lib-body, 
+#s-lg-guide-main, 
+.s-lib-box-content, 
+.s-lib-box {
+  font-family: "Source Sans 3", sans-serif !important;
+  font-optical-sizing: auto;
+  font-size: 1.7rem !important;
+  line-height: 1.6;
+}
+/* === Remove Shadow Line from Guide Header === */
+#s-lg-guide-header {
+  box-shadow: none !important;
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* === Heading Fonts === */
+h1, h2, h3, h4, 
+#s-lg-guide-header-title,
+.s-lib-box .s-lib-box-title {
+  font-family: "Source Serif 4", serif;
+  font-weight: 500;
+  color: #3b245e;
+  font-optical-sizing: auto;
+}
+
+
+/* === Remove Tabs and Breadcrumbs === */
+#s-lg-guide-tabs { display: none !important; }
+#s-lib-bc { display: none !important; }
+#s-lg-guide-tabs-title-bar { display: none !important; }
+
+/* === Hide Page Title on This Page === */ #s-lg-guide-header-title, #s-lg-guide-name { display: none !important; visibility: hidden !important; height: 0 !important; margin: 0 !important; padding: 0 !important; } /* === Restore Guide Title === */ #s-lg-guide-header { display: block !important; visibility: visible !important; background-color: #ffffff; padding: 1.5rem 1rem 0.5rem 1rem; border-bottom: 1px solid #e2e2e2; margin-bottom: 0; }
+
+/* Make sure the header itself is visible */
+#s-lg-guide-header {
+  display: block !important;
+  visibility: visible !important;
+  background-color: #ffffff;
+  padding: 1.5rem 1rem 0.5rem 1rem;
+  border-bottom: 1px solid #e2e2e2;
+  margin-bottom: 0;
+}
+
+/* === UnSticky Banner === */
+#library-banner {
+  position: relative;
+  top: auto;
+  z-index: 3001;
+  background-color: white;
+  height: 100px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+#library-banner img {
+  position: relative;
+  top: 0;
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+  object-position: top;
+}
+
+/* === Toggle Button === */
+.mobile-menu-toggle {
+  display: none;
+  background-color: #3b245e;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1.6rem;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  text-align: left;
+}
+
+.megamenu {
+  position: relative; /* unsticky */
+  z-index: 1000;
+  background-color: #3b245e;
+  padding: 9px 0;
+  border-radius: 0;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  overflow: visible;
+}
+
+
+.menu-inner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  gap: 10px;
+  padding-left: 1px;
+}
+
+.main-menu {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+
+.main-menu > li {
+  position: relative;
+}
+
+/* Main nav links */
+.main-menu > li > a {
+  color: white;
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 2.0rem;
+  padding: 10px 18px;
+  border-radius: 7px;
+  transition: background-color 0.2s ease;
+}
+
+.main-menu > li > a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Submenu base */
+.submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  color: #3b245e;
+ font-family: "Source Sans 3", sans-serif;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 2000;
+}
+
+.submenu.grid-2 { width: 640px; }
+.submenu.grid-3 { width: 900px; }
+.submenu.services-support.grid-3 { width: 660px; }
+
+.main-menu > li:hover .submenu.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.main-menu > li:hover .submenu.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.main-menu > li#services-support:hover .submenu.services-support.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+.submenu.services-support.grid-3 .column:nth-child(3) {
+  display: none;
+}
+.main-menu > li.align-right .submenu {
+  left: auto;
+  right: 0;
+}
+.main-menu > li.align-left .submenu {
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Submenu columns */
+.submenu .column {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.submenu .column:not(:first-child) {
+  border-left: none;
+  padding-left: 20px;
+  margin-left: 0;
+}
+
+/* Section labels */
+.submenu .section-label {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 12px 0 6px;
+  padding-left: 12px;
+  color: #3b245e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Submenu links */
+.submenu a {
+  color: #3b245e;
+  text-decoration: none;
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  padding: 8px 12px 8px 20px;
+  position: relative;
+  white-space: normal;
+  transition: background-color 0.2s ease;
+}
+.submenu a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 5px;
+  bottom: 5px;
+  width: 3px;
+  background-color: #ccc;
+  border-radius: 2px;
+}
+.submenu a:hover {
+  background-color: #f2f2f2;
+  color: #3b245e;
+  font-weight: 600;
+  border-radius: 6px;
+}
+.submenu h4 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 10px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* === Today's Hours === */
+.main-menu > li.menu-hours {
+  margin-left: auto;
+  padding: 0 20px;
+  border-left: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 300px;
+}
+#s_lc_tdh_4622_10456 td:first-child {
+  display: none !important;
+}
+#s_lc_tdh_4622_10456::before {
+  content: "Today’s Hours: ";
+  font-weight: 600;
+  color: white;
+  margin-right: 6px;
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+}
+#s_lc_tdh_4622_10456 table,
+#s_lc_tdh_4622_10456 tbody,
+#s_lc_tdh_4622_10456 tr,
+#s_lc_tdh_4622_10456 td {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: white;
+  white-space: nowrap;
+}
+#s_lc_tdh_4622_10456 caption,
+#s_lc_tdh_4622_10456 .s-lc-w-head,
+#s_lc_tdh_4622_10456 .s-lc-w-btn,
+#s_lc_tdh_4622_10456 .s-lc-w-today-view-link,
+#s_lc_tdh_4622_10456 .s-lc-w-today-view-all,
+#s_lc_tdh_4622_10456 th {
+  display: none !important;
+}
+
+/* === MOBILE STYLES === */
+/* === Mobile Nav Only === */
+.mobile-only {
+  display: none;
+}
+
+/* === Mobile Drawer Menu (Mobile Only) === */
+@media screen and (max-width: 768px) {
+  /* Hide the desktop megamenu on mobile */
+  .megamenu {
+    display: none !important;
+  }
+
+  /* Show the mobile drawer toggle button */
+  .mobile-drawer-toggle {
+    display: block;
+    background-color: #3b245e;
+    color: white;
+    padding: 14px 20px;
+    font-size: 1.6rem;
+    font-family: Georgia, serif;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  /* Drawer itself */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 85%;
+    max-width: 320px;
+    background-color: #ffffff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  /* When drawer is open */
+  .mobile-drawer.open {
+    display: block;
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3b245e;
+    color: white;
+    padding: 16px 20px;
+    font-size: 1.6rem;
+    font-family: Georgia, serif;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: white;
+    cursor: pointer;
+  }
+
+  .drawer-content {
+    padding: 10px 20px;
+  }
+
+  .drawer-section {
+    width: 100%;
+    text-align: left;
+    background-color: #f0f0f0;
+    border: none;
+    padding: 12px 16px;
+    margin: 8px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #3b245e;
+    cursor: pointer;
+    border-radius: 6px;
+    font-family: Georgia, serif;
+  }
+
+  .drawer-section.active {
+    background-color: #e2e2e2;
+  }
+
+  .drawer-submenu {
+    display: none;
+    padding-left: 16px;
+    margin-bottom: 8px;
+  }
+
+  .drawer-submenu a {
+    display: block;
+    padding: 8px 0;
+    color: #3b245e;
+    text-decoration: none;
+    font-size: 1.5rem;
+  }
+
+  .drawer-submenu a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Hide mobile drawer toggle on desktop */
+@media screen and (min-width: 769px) {
+  .mobile-drawer-toggle,
+  .mobile-drawer {
+    display: none !important;
+  }
+}
+/* === Light Grey Background Behind Page Content === */
+body.s-lg-guide-body,
+#s-lg-guide-main {
+  background-color: #f5f5f5 !important;
+}
+.s-lib-header,
+.s-lib-side-borders {
+  background-color: transparent !important;
+}
+#s-lg-guide-header {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+/* Remove divider line / shadow between top icons and "What's New" */
+.s-lib-featured-content,
+.s-lib-box-container,
+.s-lib-box {
+  box-shadow: none !important;
+  border: none !important;
+}
+h2.s-lib-box-title {
+  border-bottom: none !important;   /* remove the line */
+  font-size: 2.8rem !important;
+  font-weight: 600 !important;
+  font-family: "Source Serif 4", serif !important;
+  color: #3b245e !important;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+
+}
+
+/*===Hero Image and Menu Gap===*/
+.megamenu {
+  margin-bottom: 0 !important;
+  padding-bottom: 1px !important; /* adjust as needed */
+}
+
+#library-banner {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#s-lg-guide-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+/* Remove extra margin/padding above content */
+.s-lib-side-borders,
+.container.s-lib-side-borders,
+#s-lg-guide-header {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#s-lg-guide-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.s-lg-guide-body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.drawer-home-link {
+  display: block;
+  padding: 1rem 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #3b245e;
+  text-decoration: none;
+  border-bottom: 1px solid #ddd;
+}
+
+.drawer-home-link:hover {
+  background-color: #f2f2f2;
+
+}
+
+/* Fix dropdown overflow on rightmost menu item */
+.megamenu .menu-item:last-child .dropdown {
+  left: auto;
+  right: 0;
+}
+
+/* Open submenus when the parent <li> (or its link) has focus */
+.main-menu > li:focus-within .submenu.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.main-menu > li:focus-within .submenu.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+/* Make keyboard focus visible inside dropdowns */
+.submenu a:focus,
+.submenu a:focus-visible {
+  outline: 3px solid #3b245e;
+  outline-offset: 2px;
+  border-radius: 6px;
+  background: #f2f2f2;
+}
+
+
+
+</style>
