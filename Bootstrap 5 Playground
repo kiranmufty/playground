@@ -196,7 +196,7 @@ h1, h2, h3, h4,
   margin-left: 0;
 }
 
-/* Section labels */
+/* Section labels flex out  */
 .submenu .section-label {
   font-size: 1.6rem;
   font-weight: bold;
